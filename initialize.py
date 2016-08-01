@@ -1,5 +1,7 @@
+import cPickle
+
 from folder import Folder
-from utils import mkdir_if_nexists, ROOT_DIR
+from utils import mkdir_if_nexists, ROOT_DIR, TREE_FILE, CONFIG_DIR
 
 
 def make_root_dir(service):
@@ -9,7 +11,8 @@ def make_root_dir(service):
         service (): the Drive Service to connect to Drive with
     """
     mkdir_if_nexists(ROOT_DIR)
+    mkdir_if_nexists(CONFIG_DIR)
     root = Folder('root', 'root', ROOT_DIR, None, service=service)
 
-    for child in root.get_children():
-        child.get(service)
+    with open(TREE_FILE, 'w') as tree_file:
+        cPickle.dump(root, tree_file)

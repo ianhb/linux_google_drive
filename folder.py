@@ -3,7 +3,7 @@ from __future__ import print_function
 import os
 
 from file import File
-from utils import mkdir_if_nexists
+from utils import mkdir_if_nexists, datetime_from_string
 
 # Prefix used to denote a Google App File (Doc, Sheet, ...)
 MIME_FOLDER = "application/vnd.google-apps.folder"
@@ -56,6 +56,9 @@ class Folder(File):
                 children = False
         return children_list
 
+    def get_path(self):
+        return self.path
+
     def get_children(self):
         """
 
@@ -71,6 +74,9 @@ class Folder(File):
             service ():
         """
         mkdir_if_nexists(self.path)
+        if self.last_modified is not None:
+            cloud_edit_time = datetime_from_string(self.last_modified)
+            os.utime(self.path, (cloud_edit_time, cloud_edit_time))
 
     def __str__(self):
         return "Folder: " + File.__str__(self)

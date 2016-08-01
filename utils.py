@@ -1,7 +1,9 @@
 import os
 
-ROOT_DIR = os.environ["HOME"] + os.path.sep + "google_drive"
+# Absolute path of the Google Drive root directory
+import time
 
+ROOT_DIR = os.environ["HOME"] + os.path.sep + "google_drive"
 
 def mkdir_if_nexists(path):
     """
@@ -11,7 +13,7 @@ def mkdir_if_nexists(path):
     """
     if not os.path.exists(path):
         os.mkdir(path)
-        print("Created dir %s" % path)
+        print("Created directory %s" % path)
 
 
 def absolute_path(path):
@@ -24,3 +26,15 @@ def absolute_path(path):
 
     """
     return ROOT_DIR + os.path.sep + path
+
+
+def datetime_from_string(datetime_string):
+    lmt = time.strptime(datetime_string[:-5], "%Y-%m-%dT%H:%M:%S")
+    cloud_edit_time = time.mktime(lmt)
+    return cloud_edit_time
+
+
+# Absolute path of the linux_google_drive configurations folder
+CONFIG_DIR = absolute_path(".config")
+# Absolute path of the pickled directory of the last sync
+TREE_FILE = os.path.join(CONFIG_DIR, ".drivetree")

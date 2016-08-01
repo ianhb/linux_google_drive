@@ -7,6 +7,8 @@ import sys
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
 
+from utils import datetime_from_string
+
 
 class File:
     """Represents a File in Google Drive"""
@@ -54,12 +56,14 @@ class File:
             done = False
             sys.stdout.write("\n")
             sys.stdout.flush()
-            print("Downloading %s" % self.name)
+            print("Downloading %s" % self)
             while not done:
                 status, done = downloader.next_chunk()
                 sys.stdout.write("\rDownloaded {0}%".format(int(status.progress() * 100)))
                 sys.stdout.flush()
-            return fh
+            fh.close()
+            cloud_edit_time = datetime_from_string(self.last_modified)
+            os.utime(self.path, (cloud_edit_time, cloud_edit_time))
         except HttpError:
             print("Couldn't download %s" % self.path)
             return None
@@ -78,4 +82,4 @@ class File:
             self._get_file(service)
 
     def __str__(self):
-        return self.name
+        return self.name + " Modified: " + self.last_modified
